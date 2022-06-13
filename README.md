@@ -1,2 +1,2 @@
 # Chess
-Console-based chess in C
+Console-based, two-player chess in C
