@@ -9,15 +9,15 @@
  * of a moving piece
  */
 typedef struct _moveConjecture {
-	/* current location */
-	int row;
-	int col;
+    /* current location */
+    int row;
+    int col;
 
-	/* destination */
-	int dRow;
-	int dCol;
+    /* destination */
+    int dRow;
+    int dCol;
 
-	char pieceName;
+    char pieceName;
 } MoveConjecture;
 
 
@@ -26,10 +26,10 @@ typedef struct _moveConjecture {
  * and returns a pointer to that copy
  */
 char *newMove(const char *moveToCopy) {
-	char *movePtr = malloc(strlen(moveToCopy) + 1);
-	strcpy(movePtr, moveToCopy);
+    char *movePtr = malloc(strlen(moveToCopy) + 1);
+    strcpy(movePtr, moveToCopy);
 
-	return movePtr;
+    return movePtr;
 }
 
 
@@ -38,17 +38,17 @@ char *newMove(const char *moveToCopy) {
  * that represents the move.
  */
 char *getMoveStr(MoveConjecture move) {
-	static char moveStr[] = "    ";
+    static char moveStr[] = "    ";
 
-	/* moveStr[0:1] = source coord */
-	moveStr[0] = colToLetter(move.col);
-	moveStr[1] = rowToLetter(move.row); 
+    /* moveStr[0:1] = source coord */
+    moveStr[0] = colToLetter(move.col);
+    moveStr[1] = rowToLetter(move.row); 
 
-	/* moveStr[2:3] = destination coord */
-	moveStr[2] = colToLetter(move.dCol);
-	moveStr[3] = rowToLetter(move.dRow); 
+    /* moveStr[2:3] = destination coord */
+    moveStr[2] = colToLetter(move.dCol);
+    moveStr[3] = rowToLetter(move.dRow); 
 
-	return moveStr;
+    return moveStr;
 }
 
 /* 
@@ -69,7 +69,7 @@ int moveType;
  * collision?
  */
 int noCollision(char destinationPiece, char movingPiece) {
-	return (moveType = destinationPiece == ' ');	
+    return (moveType = destinationPiece == ' ');    
 }
 
 /*
@@ -78,14 +78,14 @@ int noCollision(char destinationPiece, char movingPiece) {
  * sets moveType accordingly
  */
 int onlyUnfriendlyCollision(char destinationPiece, char movingPiece) {
-	if(moveType = destinationPiece == ' ') {
-		return FALSE;
-	}
+    if(moveType = destinationPiece == ' ') {
+        return FALSE;
+    }
 
-	int isWhite = pieceIsWhite(movingPiece);	
-	int destIsWhite = pieceIsWhite(destinationPiece);	
+    int isWhite = pieceIsWhite(movingPiece);    
+    int destIsWhite = pieceIsWhite(destinationPiece);    
 
-	return (isWhite != destIsWhite);
+    return (isWhite != destIsWhite);
 }
 
 /*
@@ -94,19 +94,19 @@ int onlyUnfriendlyCollision(char destinationPiece, char movingPiece) {
  * sets moveType accordingly
  */
 int noFriendlyCollision(char destinationPiece, char movingPiece) {
-	if(moveType = destinationPiece == ' ') {
-		return TRUE;
-	}
+    if(moveType = destinationPiece == ' ') {
+        return TRUE;
+    }
 
-	int isWhite = pieceIsWhite(movingPiece);	
-	int destIsWhite = pieceIsWhite(destinationPiece);	
+    int isWhite = pieceIsWhite(movingPiece);    
+    int destIsWhite = pieceIsWhite(destinationPiece);    
 
-	if(isWhite != destIsWhite) { /* unfriendly collision */
-		return TRUE;
-	}
-	
-	/* friendly collision */
-	return FALSE;
+    if(isWhite != destIsWhite) { /* unfriendly collision */
+        return TRUE;
+    }
+    
+    /* friendly collision */
+    return FALSE;
 }
 
 /*
@@ -115,9 +115,9 @@ int noFriendlyCollision(char destinationPiece, char movingPiece) {
  */
 void conditionalAddMove(GameState *gamePtr, char **moveArr, int *numMovesPtr, 
                         MoveConjecture move, int (* condition)(char, char)) {
-	if(condition(gamePtr->board[move.dRow][move.dCol], move.pieceName)) {
-		moveArr[(*numMovesPtr)++] = newMove(getMoveStr(move)); /* add move */
-	}
+    if(condition(gamePtr->board[move.dRow][move.dCol], move.pieceName)) {
+        moveArr[(*numMovesPtr)++] = newMove(getMoveStr(move)); /* add move */
+    }
 }
 
 
@@ -129,33 +129,33 @@ void conditionalAddMove(GameState *gamePtr, char **moveArr, int *numMovesPtr,
 void pawnMoves(GameState *gamePtr, char **moveArr, int *numMovesPtr, 
                MoveConjecture move) {
 
-	int isWhite = pieceIsWhite(move.pieceName);
-	int canDoubleJump = (!isWhite && move.row == 1) || 
+    int isWhite = pieceIsWhite(move.pieceName);
+    int canDoubleJump = (!isWhite && move.row == 1) || 
                         (isWhite && move.row == 6);
-	int regularJump = (isWhite) ? -1 : 1;
+    int regularJump = (isWhite) ? -1 : 1;
 
-	move.dCol = move.col;
+    move.dCol = move.col;
 
-	/* double jump */
-	move.dRow = move.row + 2 * regularJump;
-	if(canDoubleJump) {
-		conditionalAddMove(gamePtr, moveArr, numMovesPtr, move, noCollision);
-	}
+    /* double jump */
+    move.dRow = move.row + 2 * regularJump;
+    if(canDoubleJump) {
+        conditionalAddMove(gamePtr, moveArr, numMovesPtr, move, noCollision);
+    }
 
-	/* single jump */
-	move.dRow = move.row + 1 * regularJump;
-	conditionalAddMove(gamePtr, moveArr, numMovesPtr, move, noCollision);
+    /* single jump */
+    move.dRow = move.row + 1 * regularJump;
+    conditionalAddMove(gamePtr, moveArr, numMovesPtr, move, noCollision);
 
 
-	/* diagonal captures */
-	move.dCol = move.col + 1;
-	if(move.dCol < 8 && move.dCol >= 0)
-		conditionalAddMove(gamePtr, moveArr, numMovesPtr, move, 
+    /* diagonal captures */
+    move.dCol = move.col + 1;
+    if(move.dCol < 8 && move.dCol >= 0)
+        conditionalAddMove(gamePtr, moveArr, numMovesPtr, move, 
                            onlyUnfriendlyCollision);
 
-	move.dCol = move.col - 1;
-	if(move.dCol < 8 && move.dCol >= 0)
-		conditionalAddMove(gamePtr, moveArr, numMovesPtr, move, 
+    move.dCol = move.col - 1;
+    if(move.dCol < 8 && move.dCol >= 0)
+        conditionalAddMove(gamePtr, moveArr, numMovesPtr, move, 
                            onlyUnfriendlyCollision);
 }
 
@@ -169,20 +169,20 @@ void repeatedDirectionalMove(GameState *gamePtr, char **moveArr,
                              int *numMovesPtr, MoveConjecture move, 
                              int rOffset, int cOffset) {
 
-	int r = move.row + rOffset;
-	int c = move.col + cOffset;
-	while(r >= 0 && r < 8 && c >= 0 && c < 8) {
-		move.dRow = r;
-		move.dCol = c;
-		conditionalAddMove(gamePtr, moveArr, numMovesPtr, move, 
+    int r = move.row + rOffset;
+    int c = move.col + cOffset;
+    while(r >= 0 && r < 8 && c >= 0 && c < 8) {
+        move.dRow = r;
+        move.dCol = c;
+        conditionalAddMove(gamePtr, moveArr, numMovesPtr, move, 
                            noFriendlyCollision);
-		if(moveType != NO_COLLISION)
-			return;
+        if(moveType != NO_COLLISION)
+            return;
 
-		r += rOffset;
-		c += cOffset;
-	}
-	
+        r += rOffset;
+        c += cOffset;
+    }
+    
 }
 
 /*
@@ -193,13 +193,13 @@ void repeatedDirectionalMove(GameState *gamePtr, char **moveArr,
 void rookMoves(GameState *gamePtr, char **moveArr, int *numMovesPtr, 
                MoveConjecture move) {
     /* left */
-	repeatedDirectionalMove(gamePtr, moveArr, numMovesPtr, move, 0, -1);
+    repeatedDirectionalMove(gamePtr, moveArr, numMovesPtr, move, 0, -1);
     /* right */
-	repeatedDirectionalMove(gamePtr, moveArr, numMovesPtr, move, 0, 1);
+    repeatedDirectionalMove(gamePtr, moveArr, numMovesPtr, move, 0, 1);
     /* up */
-	repeatedDirectionalMove(gamePtr, moveArr, numMovesPtr, move, -1, 0);
+    repeatedDirectionalMove(gamePtr, moveArr, numMovesPtr, move, -1, 0);
     /* down */
-	repeatedDirectionalMove(gamePtr, moveArr, numMovesPtr, move, 1, 0);
+    repeatedDirectionalMove(gamePtr, moveArr, numMovesPtr, move, 1, 0);
 }
 
 /*
@@ -209,18 +209,18 @@ void rookMoves(GameState *gamePtr, char **moveArr, int *numMovesPtr,
  */
 void knightMoves(GameState *gamePtr, char **moveArr, int *numMovesPtr, 
                  MoveConjecture move) {
-	int knightMoveOffsets[8][2] = {{1, 2}, {1, -2}, {2, 1}, {2, -1}, {-1, 2}, 
+    int knightMoveOffsets[8][2] = {{1, 2}, {1, -2}, {2, 1}, {2, -1}, {-1, 2}, 
                                    {-1, -2}, {-2, 1}, {-2, -1}};
 
-	for(int i = 0; i < 8; i++) {
-		move.dRow = move.row + knightMoveOffsets[i][0];
-		move.dCol = move.col + knightMoveOffsets[i][1];
-		if(move.dRow >= 0 && move.dRow < 8 && move.dCol >= 0 && 
+    for(int i = 0; i < 8; i++) {
+        move.dRow = move.row + knightMoveOffsets[i][0];
+        move.dCol = move.col + knightMoveOffsets[i][1];
+        if(move.dRow >= 0 && move.dRow < 8 && move.dCol >= 0 && 
            move.dCol < 8){ /* move fits in board */
-			conditionalAddMove(gamePtr, moveArr, numMovesPtr, 
+            conditionalAddMove(gamePtr, moveArr, numMovesPtr, 
                                move, noFriendlyCollision);
         }
-	}
+    }
 }
 
 
@@ -232,13 +232,13 @@ void knightMoves(GameState *gamePtr, char **moveArr, int *numMovesPtr,
 void bishopMoves(GameState *gamePtr, char **moveArr, int *numMovesPtr, 
                  MoveConjecture move) {
     /* northwest */
-	repeatedDirectionalMove(gamePtr, moveArr, numMovesPtr, move, -1, -1);
+    repeatedDirectionalMove(gamePtr, moveArr, numMovesPtr, move, -1, -1);
     /* northeast */
-	repeatedDirectionalMove(gamePtr, moveArr, numMovesPtr, move, -1, 1);
+    repeatedDirectionalMove(gamePtr, moveArr, numMovesPtr, move, -1, 1);
     /* southwest */
-	repeatedDirectionalMove(gamePtr, moveArr, numMovesPtr, move, 1, -1); 
+    repeatedDirectionalMove(gamePtr, moveArr, numMovesPtr, move, 1, -1); 
     /* southeast */
-	repeatedDirectionalMove(gamePtr, moveArr, numMovesPtr, move, 1, 1); 
+    repeatedDirectionalMove(gamePtr, moveArr, numMovesPtr, move, 1, 1); 
 }
 
 /*
@@ -248,8 +248,8 @@ void bishopMoves(GameState *gamePtr, char **moveArr, int *numMovesPtr,
  */
 void queenMoves(GameState *gamePtr, char **moveArr, int *numMovesPtr, 
                 MoveConjecture move) {
-	rookMoves(gamePtr, moveArr, numMovesPtr, move);
-	bishopMoves(gamePtr, moveArr, numMovesPtr, move);
+    rookMoves(gamePtr, moveArr, numMovesPtr, move);
+    bishopMoves(gamePtr, moveArr, numMovesPtr, move);
 }
 
 /*
@@ -259,18 +259,18 @@ void queenMoves(GameState *gamePtr, char **moveArr, int *numMovesPtr,
  */
 void kingMoves(GameState *gamePtr, char **moveArr, int *numMovesPtr, 
                MoveConjecture move) {
-	int kingMoveOffsets[8][2] = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, 
+    int kingMoveOffsets[8][2] = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}, 
                                  {1 , 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
-	for(int i = 0; i < 8; i++) {
-		move.dRow = move.row + kingMoveOffsets[i][0];
-		move.dCol = move.col + kingMoveOffsets[i][1];
-		if(move.dRow >= 0 && move.dRow < 8 && move.dCol >= 0 &&
+    for(int i = 0; i < 8; i++) {
+        move.dRow = move.row + kingMoveOffsets[i][0];
+        move.dCol = move.col + kingMoveOffsets[i][1];
+        if(move.dRow >= 0 && move.dRow < 8 && move.dCol >= 0 &&
            move.dCol < 8) { /* move fits in board */
-			conditionalAddMove(gamePtr, moveArr, numMovesPtr, 
+            conditionalAddMove(gamePtr, moveArr, numMovesPtr, 
                                move, noFriendlyCollision);
         }
-	}
+    }
 }
 
 /*
@@ -279,58 +279,58 @@ void kingMoves(GameState *gamePtr, char **moveArr, int *numMovesPtr,
  */
 void getPieceMoves(GameState *gamePtr, char **moveArr, int *numMovesPtr, 
                    int row, int col) {
-	/* set up possible move struct */
-	MoveConjecture possibleMove;
-	possibleMove.row = row;
-	possibleMove.col = col;
-	possibleMove.pieceName = gamePtr->board[row][col];
+    /* set up possible move struct */
+    MoveConjecture possibleMove;
+    possibleMove.row = row;
+    possibleMove.col = col;
+    possibleMove.pieceName = gamePtr->board[row][col];
 
 
-	/* add all possible moves based on pieceType */
-	switch(tolower(possibleMove.pieceName)) {
-		case 'p':
-			return pawnMoves(gamePtr, moveArr, numMovesPtr, possibleMove);
-			break;
-		case 'r':
-			return rookMoves(gamePtr, moveArr, numMovesPtr, possibleMove);
-			break;
-		case 'n':
-			return knightMoves(gamePtr, moveArr, numMovesPtr, possibleMove);
-			break;
-		case 'b':
-			return bishopMoves(gamePtr, moveArr, numMovesPtr, possibleMove);
-			break;
-		case 'q':
-			return queenMoves(gamePtr, moveArr, numMovesPtr, possibleMove);
-			break;
-		case 'k':
-			return kingMoves(gamePtr, moveArr, numMovesPtr, possibleMove);
-			break;
+    /* add all possible moves based on pieceType */
+    switch(tolower(possibleMove.pieceName)) {
+        case 'p':
+            return pawnMoves(gamePtr, moveArr, numMovesPtr, possibleMove);
+            break;
+        case 'r':
+            return rookMoves(gamePtr, moveArr, numMovesPtr, possibleMove);
+            break;
+        case 'n':
+            return knightMoves(gamePtr, moveArr, numMovesPtr, possibleMove);
+            break;
+        case 'b':
+            return bishopMoves(gamePtr, moveArr, numMovesPtr, possibleMove);
+            break;
+        case 'q':
+            return queenMoves(gamePtr, moveArr, numMovesPtr, possibleMove);
+            break;
+        case 'k':
+            return kingMoves(gamePtr, moveArr, numMovesPtr, possibleMove);
+            break;
 
-	}	
+    }    
 }
 
 /*
  * is the castle of respective type and color a piece-legal move?
  */
 int canCastle(GameState *gamePtr, int color, int isKingSide) {
-	int piecesAlign;
+    int piecesAlign;
 
-	int row = (color == WHITE) ? 7 : 0;
-	char king = (color == WHITE) ? 'K' : 'k';
-	char rook = (color == WHITE) ? 'R' : 'r'; 
+    int row = (color == WHITE) ? 7 : 0;
+    char king = (color == WHITE) ? 'K' : 'k';
+    char rook = (color == WHITE) ? 'R' : 'r'; 
 
-	if(isKingSide) {
-		piecesAlign = gamePtr->board[row][4] == king && 
+    if(isKingSide) {
+        piecesAlign = gamePtr->board[row][4] == king && 
             gamePtr->board[row][7] == rook &&
-			gamePtr->board[row][5] == ' ' && gamePtr->board[row][6] == ' ';
+            gamePtr->board[row][5] == ' ' && gamePtr->board[row][6] == ' ';
 
-	} else {
-		piecesAlign = gamePtr->board[row][4] == king && 
+    } else {
+        piecesAlign = gamePtr->board[row][4] == king && 
             gamePtr->board[row][0] == rook &&
-			gamePtr->board[row][5] == ' ' && gamePtr->board[row][6] == ' ';
-	}
-	return piecesAlign;
+            gamePtr->board[row][5] == ' ' && gamePtr->board[row][6] == ' ';
+    }
+    return piecesAlign;
 }
 
 
@@ -341,13 +341,13 @@ int canCastle(GameState *gamePtr, int color, int isKingSide) {
 void getCastles(GameState *gamePtr, char **moveArr, int *numMovesPtr, 
                 int color) {
 
-	if(canCastle(gamePtr, color, TRUE)) {
-		moveArr[(*numMovesPtr)++] = newMove(KING_SIDE_CASTLE);
-	}
+    if(canCastle(gamePtr, color, TRUE)) {
+        moveArr[(*numMovesPtr)++] = newMove(KING_SIDE_CASTLE);
+    }
 
-	if(canCastle(gamePtr, color, FALSE)) {
-		moveArr[(*numMovesPtr)++] = newMove(QUEEN_SIDE_CASTLE);
-	}
+    if(canCastle(gamePtr, color, FALSE)) {
+        moveArr[(*numMovesPtr)++] = newMove(QUEEN_SIDE_CASTLE);
+    }
 }
 
 /*
@@ -355,43 +355,43 @@ void getCastles(GameState *gamePtr, char **moveArr, int *numMovesPtr,
  * according to the state of the board
  */
 int getAllMoves(GameState *gamePtr, char **moveArr, int color) {
-	int numMoves = 0;
-	char piece;
-	for(int row = 0; row < 8; row++) {
-		for(int col = 0; col < 8; col++) {
-			piece = gamePtr->board[row][col];
+    int numMoves = 0;
+    char piece;
+    for(int row = 0; row < 8; row++) {
+        for(int col = 0; col < 8; col++) {
+            piece = gamePtr->board[row][col];
 
-			if(piece != ' ' && pieceIsWhite(piece) == color) {
-				getPieceMoves(gamePtr, moveArr, &numMoves, row, col);
-			}
-		}
-	}
+            if(piece != ' ' && pieceIsWhite(piece) == color) {
+                getPieceMoves(gamePtr, moveArr, &numMoves, row, col);
+            }
+        }
+    }
 
-	getCastles(gamePtr, moveArr, &numMoves, color);
-	return numMoves;
+    getCastles(gamePtr, moveArr, &numMoves, color);
+    return numMoves;
 }
 
 /*
  * is the king in check?
  */
 int isKingInCheck(GameState *gamePtr, int color) {
-	char **opposingMoves = malloc(150 * sizeof(char *));
-	int numOpposingMoves = getAllMoves(gamePtr, opposingMoves, !color);
-	char playersKing = (color == WHITE) ? 'K' : 'k';
+    char **opposingMoves = malloc(150 * sizeof(char *));
+    int numOpposingMoves = getAllMoves(gamePtr, opposingMoves, !color);
+    char playersKing = (color == WHITE) ? 'K' : 'k';
 
-	int rDest, cDest;
-	for(int i = 0; i < numOpposingMoves; i++) {
-		cDest = letterToCol(opposingMoves[i][2]);
-		rDest = letterToRow(opposingMoves[i][3]);
+    int rDest, cDest;
+    for(int i = 0; i < numOpposingMoves; i++) {
+        cDest = letterToCol(opposingMoves[i][2]);
+        rDest = letterToRow(opposingMoves[i][3]);
 
-		if(gamePtr->board[rDest][cDest] == playersKing) {
-			freeStringArray(opposingMoves, numOpposingMoves);
-			return TRUE;
-		}	
-	}
+        if(gamePtr->board[rDest][cDest] == playersKing) {
+            freeStringArray(opposingMoves, numOpposingMoves);
+            return TRUE;
+        }    
+    }
 
-	freeStringArray(opposingMoves, numOpposingMoves);
-	return FALSE;
+    freeStringArray(opposingMoves, numOpposingMoves);
+    return FALSE;
 }
 
 
@@ -399,14 +399,14 @@ int isKingInCheck(GameState *gamePtr, int color) {
  * recieves a move, checks if that move puts the king in check.
  */
 int putsKingInCheck(GameState *gamePtr, char *move, int color) {
-	char overwrittenPiece;
-	overwrittenPiece = tempExecuteMove(gamePtr, move, color);  
+    char overwrittenPiece;
+    overwrittenPiece = tempExecuteMove(gamePtr, move, color);  
 
-	int kingGotChecked = isKingInCheck(gamePtr, color);
-	
-	reverseMove(gamePtr, move, color, overwrittenPiece);
+    int kingGotChecked = isKingInCheck(gamePtr, color);
+    
+    reverseMove(gamePtr, move, color, overwrittenPiece);
 
-	return kingGotChecked;
+    return kingGotChecked;
 }
 
 /*
@@ -414,37 +414,37 @@ int putsKingInCheck(GameState *gamePtr, char *move, int color) {
  * color
  */
 int getAllLegalMoves(GameState *gamePtr, char **moveArr, int color) {
-	char **possibleMoveArr = malloc(150 * sizeof(char *));
-	int numPossibleMoves = getAllMoves(gamePtr, possibleMoveArr, color);
+    char **possibleMoveArr = malloc(150 * sizeof(char *));
+    int numPossibleMoves = getAllMoves(gamePtr, possibleMoveArr, color);
 
     int numLegalMoves = 0;
-	for(int i = 0; i < numPossibleMoves; i++) {
-		if(!putsKingInCheck(gamePtr, possibleMoveArr[i], color)) {
-			moveArr[numLegalMoves++] = possibleMoveArr[i];
+    for(int i = 0; i < numPossibleMoves; i++) {
+        if(!putsKingInCheck(gamePtr, possibleMoveArr[i], color)) {
+            moveArr[numLegalMoves++] = possibleMoveArr[i];
             possibleMoveArr[i] = NULL;
-		}
-	}
+        }
+    }
 
 
-	freeStringArray(possibleMoveArr, numPossibleMoves);
+    freeStringArray(possibleMoveArr, numPossibleMoves);
 
-	return numLegalMoves;
+    return numLegalMoves;
 }
 
 /*
  * gets all moves that are legal for a given piece
  */
 int getPieceLegalMoves(GameState *gamePtr, char **moveArr, int row, int col) {
-	int numMoves = 0;
-	int numLegalMoves = 0;
-	getPieceMoves(gamePtr, moveArr, &numMoves, row, col);
-	int color = pieceIsWhite(gamePtr->board[row][col]);
+    int numMoves = 0;
+    int numLegalMoves = 0;
+    getPieceMoves(gamePtr, moveArr, &numMoves, row, col);
+    int color = pieceIsWhite(gamePtr->board[row][col]);
 
-	for(int i = 0; i < numMoves; i++) {
-		if(!putsKingInCheck(gamePtr, moveArr[i], color)) {
-			moveArr[numLegalMoves++] = moveArr[i];
-		}	
-	}
+    for(int i = 0; i < numMoves; i++) {
+        if(!putsKingInCheck(gamePtr, moveArr[i], color)) {
+            moveArr[numLegalMoves++] = moveArr[i];
+        }    
+    }
 
-	return numLegalMoves;
+    return numLegalMoves;
 }

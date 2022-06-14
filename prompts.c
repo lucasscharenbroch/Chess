@@ -22,26 +22,26 @@
  * int, the boolean value that is read (TRUE or FALSE)
  */
 int getBoolFromInput() {
-	int boolValue;
-	char c;
+    int boolValue;
+    char c;
 
-	while(TRUE){
-		c = tolower(getchar());
-		if(c == 'y') {
-			boolValue = TRUE;
-			break;
-		} else if(c == 'n') {
-			boolValue = FALSE;
-			break;
-		}	
-	}
+    while(TRUE){
+        c = tolower(getchar());
+        if(c == 'y') {
+            boolValue = TRUE;
+            break;
+        } else if(c == 'n') {
+            boolValue = FALSE;
+            break;
+        }    
+    }
 
-	/* read the rest of the line */
+    /* read the rest of the line */
 
-	while(c != '\n')
-		c = getchar();
+    while(c != '\n')
+        c = getchar();
 
-	return boolValue;
+    return boolValue;
 }
 
 /*
@@ -53,29 +53,29 @@ int getBoolFromInput() {
  * int, the value read from input
  */
 int getIntFromInput() {
-	int intValue = 0; 	
-	int valueWasRead = FALSE;
-	char c;
+    int intValue = 0;     
+    int valueWasRead = FALSE;
+    char c;
 
-	while(TRUE) {
-		c = getchar();
+    while(TRUE) {
+        c = getchar();
 
-		if(isdigit(c)) {
-			valueWasRead = TRUE;
-			intValue *= 10;
-			intValue += c - '0';
-		} else {
-			if(valueWasRead)
-				break;
-		}
-	}
+        if(isdigit(c)) {
+            valueWasRead = TRUE;
+            intValue *= 10;
+            intValue += c - '0';
+        } else {
+            if(valueWasRead)
+                break;
+        }
+    }
 
-	/* read the rest of the line */
+    /* read the rest of the line */
 
-	while(c != '\n')
-		c = getchar();
+    while(c != '\n')
+        c = getchar();
 
-	return intValue;
+    return intValue;
 }
 
 /*
@@ -87,15 +87,15 @@ int getIntFromInput() {
  * maxSize, the length of string. 
  */
 void getStringFromInput(char *string, int maxSize) {
-	char c;
-	int i = 0; /* index in string */
+    char c;
+    int i = 0; /* index in string */
 
-	while(!isspace(c = getchar()) && i < maxSize-1) {
-		string[i++] = c;		
-	}
+    while(!isspace(c = getchar()) && i < maxSize-1) {
+        string[i++] = c;        
+    }
 
-	/* truncate string */
-	string[i] = '\0';
+    /* truncate string */
+    string[i] = '\0';
 }
 
 
@@ -112,28 +112,28 @@ void getStringFromInput(char *string, int maxSize) {
  * NULL is returned when the type is invalid.
  */
 void *prompt(char *promptString, int type) {
-	printf("%s", promptString);	
+    printf("%s", promptString);    
 
-	switch(type) {
-		case BOOL:
-			{
-				int *result = malloc(sizeof(int));
-				*result = getBoolFromInput();
-				return (void *)result;
-			}
-		case INT:
-			{
-				int *result = malloc(sizeof(int));
-				*result = getIntFromInput(result);
-				return (void *)result;
-			}
-		case STRING:
-			{
-				char *result = malloc(sizeof(char) * MAX_STRING_SIZE);
-				getStringFromInput(result, MAX_STRING_SIZE);
-				return (void *)result;
-			}
-		default:
-			return NULL;	
-	}
+    switch(type) {
+        case BOOL:
+            {
+                int *result = malloc(sizeof(int));
+                *result = getBoolFromInput();
+                return (void *)result;
+            }
+        case INT:
+            {
+                int *result = malloc(sizeof(int));
+                *result = getIntFromInput(result);
+                return (void *)result;
+            }
+        case STRING:
+            {
+                char *result = malloc(sizeof(char) * MAX_STRING_SIZE);
+                getStringFromInput(result, MAX_STRING_SIZE);
+                return (void *)result;
+            }
+        default:
+            return NULL;    
+    }
 }

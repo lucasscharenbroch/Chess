@@ -27,21 +27,21 @@
 
 /*
  * stores information about the game:
- *	   the board,
- *	   turn, user preference, captured pieces, and scores
+ *       the board,
+ *       turn, user preference, captured pieces, and scores
  */
 typedef struct _gameState {
-	char board[8][8];
-	int highlighted[8][8]; /* array of booleans that represents which tiles should be hihlighted */
+    char board[8][8];
+    int highlighted[8][8]; /* array of booleans that represents which tiles should be hihlighted */
 
-	int turn; /* WHITE or BLACK */
-	int printInvertedBoard; /* flip the board during black's turn ? */
+    int turn; /* WHITE or BLACK */
+    int printInvertedBoard; /* flip the board during black's turn ? */
 
-	char whiteCapturedPieces[17];
-	char blackCapturedPieces[17];
+    char whiteCapturedPieces[17];
+    char blackCapturedPieces[17];
 
-	int whiteScore; /* based on captured pieces and their respective "Scores" */
-	int blackScore; /* based on captured pieces and their respective "Scores" */
+    int whiteScore; /* based on captured pieces and their respective "Scores" */
+    int blackScore; /* based on captured pieces and their respective "Scores" */
 
 } GameState;
 
